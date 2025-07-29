@@ -106,7 +106,9 @@ cd admin-panel
 
 # Method 2: Composer (Recommended - specific version)
 composer create-project laravel/laravel admin-panel "10.*"
+
 atau
+
 composer create-project laravel/laravel admin-panel "^10.0"
 cd admin-panel
 
