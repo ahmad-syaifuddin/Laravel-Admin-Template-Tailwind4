@@ -33,44 +33,58 @@
 
 ### 1. Create New Laravel Project
 
-#### Opsi A: Menggunakan Laravel Installer (Recommended)
+#### Opsi A: Menggunakan Laravel Installer
 
 ```bash
 # Install Laravel installer (jika belum ada)
 composer global require laravel/installer
 
-# Membuat project dengan versi terbaru
+# Membuat project dengan versi terbaru (Laravel 11.x)
 laravel new admin-panel
 cd admin-panel
 
-# Membuat project dengan versi tertentu
-laravel new admin-panel --version=10.*
-cd admin-panel
-
-# Atau dengan opsi interactive untuk memilih versi
-laravel new admin-panel --prompt-version
-cd admin-panel
+# ⚠️ Note: Laravel Installer 5.16.0+ hanya support Laravel versi terbaru
+# Untuk versi spesifik, gunakan Composer (lihat Opsi B)
 ```
 
-#### Opsi B: Menggunakan Composer Create-Project
+#### Opsi B: Menggunakan Composer Create-Project (Recommended untuk versi spesifik)
 
 ```bash
 # Versi terbaru (stable)
 composer create-project laravel/laravel admin-panel
 
-# Versi tertentu (contoh: Laravel 10)
-composer create-project laravel/laravel admin-panel "10.*"
+# ✅ Laravel 10 (LTS) - RECOMMENDED
+composer create-project laravel/laravel admin-panel "^10.0"
+
+# ✅ Laravel 9 (jika masih diperlukan)
+composer create-project laravel/laravel admin-panel "^9.0"
 
 # Versi spesifik
 composer create-project laravel/laravel admin-panel "10.48.22"
 
 # Dengan dev dependencies
-composer create-project laravel/laravel admin-panel --prefer-dist
+composer create-project laravel/laravel admin-panel "^10.0" --prefer-dist
 
 cd admin-panel
 ```
 
-#### Opsi C: Cek Versi Available
+#### Opsi C: Clone dari GitHub (Alternative)
+
+```bash
+# Clone repository Laravel
+git clone https://github.com/laravel/laravel.git admin-panel
+cd admin-panel
+
+# Checkout ke tag versi tertentu
+git checkout v10.4.1
+
+# Install dependencies
+composer install
+cp .env.example .env
+php artisan key:generate
+```
+
+#### Opsi D: Cek Versi Available
 
 ```bash
 # Cek versi Laravel yang tersedia
@@ -78,6 +92,25 @@ composer show laravel/laravel --available
 
 # Atau cek versi framework
 composer show laravel/framework --available
+
+# Cek versi Laravel Installer yang terinstall
+laravel --version
+
+# Update Laravel Installer ke versi terbaru
+composer global update laravel/installer
+```
+
+#### ⚡ Quick Commands untuk Versi Populer
+
+```bash
+# Laravel 11.x (Latest - PHP 8.2+)
+composer create-project laravel/laravel admin-panel
+
+# Laravel 10.x (LTS - PHP 8.1+)
+composer create-project laravel/laravel admin-panel "^10.0"
+
+# Laravel 9.x (PHP 8.0+)
+composer create-project laravel/laravel admin-panel "^9.0"
 ```
 
 ### 2. Install Tailwind CSS 4
