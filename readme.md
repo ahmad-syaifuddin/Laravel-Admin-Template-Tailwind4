@@ -54,7 +54,7 @@ cd admin-panel
 composer create-project laravel/laravel admin-panel
 
 # ✅ Laravel 10 (LTS) - RECOMMENDED
-composer create-project laravel/laravel admin-panel "^10.*"
+composer create-project laravel/laravel admin-panel "10.*"
 
 # ✅ Laravel 9 (jika masih diperlukan)
 composer create-project laravel/laravel admin-panel "^9.0"
