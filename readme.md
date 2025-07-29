@@ -16,23 +16,68 @@
 
 ## Prerequisites
 
-- PHP 8.1+
+- PHP 8.1+ (untuk Laravel 10+) atau PHP 8.2+ (untuk Laravel 11+)
 - Node.js 18+
-- Composer
-- Laravel 10+
+- Composer 2.0+
+- Laravel 10+ (recommended Laravel 11 untuk fitur terbaru)
+
+### Compatibility Matrix
+
+| Laravel Version | PHP Version | Tailwind 4 Support | Vite Version |
+|----------------|-------------|-------------------|--------------|
+| 11.x           | PHP 8.2+    | ✅ Full Support   | 5.0+         |
+| 10.x           | PHP 8.1+    | ✅ Full Support   | 4.0+         |
+| 9.x            | PHP 8.0+    | ⚠️ Manual Setup   | 3.0+         |
 
 ## Installation
 
 ### 1. Create New Laravel Project
 
+#### Opsi A: Menggunakan Laravel Installer (Recommended)
+
 ```bash
-# Menggunakan Laravel installer
+# Install Laravel installer (jika belum ada)
+composer global require laravel/installer
+
+# Membuat project dengan versi terbaru
 laravel new admin-panel
 cd admin-panel
 
-# Atau menggunakan Composer
-composer create-project laravel/laravel admin-panel
+# Membuat project dengan versi tertentu
+laravel new admin-panel --version=10.*
 cd admin-panel
+
+# Atau dengan opsi interactive untuk memilih versi
+laravel new admin-panel --prompt-version
+cd admin-panel
+```
+
+#### Opsi B: Menggunakan Composer Create-Project
+
+```bash
+# Versi terbaru (stable)
+composer create-project laravel/laravel admin-panel
+
+# Versi tertentu (contoh: Laravel 10)
+composer create-project laravel/laravel admin-panel "10.*"
+
+# Versi spesifik
+composer create-project laravel/laravel admin-panel "10.48.22"
+
+# Dengan dev dependencies
+composer create-project laravel/laravel admin-panel --prefer-dist
+
+cd admin-panel
+```
+
+#### Opsi C: Cek Versi Available
+
+```bash
+# Cek versi Laravel yang tersedia
+composer show laravel/laravel --available
+
+# Atau cek versi framework
+composer show laravel/framework --available
 ```
 
 ### 2. Install Tailwind CSS 4
@@ -40,6 +85,20 @@ cd admin-panel
 ```bash
 # Install Tailwind 4 dan dependensinya
 npm install tailwindcss @tailwindcss/vite
+
+# Untuk Laravel 9.x atau versi lama (manual setup)
+npm install tailwindcss @tailwindcss/vite postcss autoprefixer
+
+# Verify installation
+npm list tailwindcss
+```
+
+#### Note untuk Laravel versi lama:
+Jika menggunakan Laravel 9.x atau dibawah, mungkin perlu setup manual PostCSS:
+
+```bash
+# Generate postcss.config.js (jika belum ada)
+npx tailwindcss init -p
 ```
 
 ### 3. Configure Vite
@@ -471,6 +530,31 @@ export default defineConfig({
    # Clear node modules dan reinstall
    rm -rf node_modules package-lock.json
    npm install
+   ```
+
+4. **Laravel version compatibility issues**
+   ```bash
+   # Check Laravel version
+   php artisan --version
+   
+   # Check if Vite is available (Laravel 9.19+)
+   php artisan list | grep vite
+   
+   # Jika tidak ada Vite, upgrade Laravel atau gunakan Laravel Mix
+   composer update laravel/framework
+   ```
+
+5. **PHP version mismatch**
+   ```bash
+   # Check current PHP version
+   php -v
+   
+   # Check composer.json requirements
+   cat composer.json | grep php
+   
+   # Update PHP if needed (Ubuntu/Debian example)
+   sudo apt update
+   sudo apt install php8.2-cli php8.2-fpm
    ```
 
 ### Performance Tips
