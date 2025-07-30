@@ -51,7 +51,6 @@ rm -f tailwind.config.js postcss.config.js
 
 # Install Tailwind CSS 4 and FontAwesome
 npm install @tailwindcss/vite @fortawesome/fontawesome-free
-
 ```
 
 ### 4. Clean Up Breeze's Tailwind v3 CSS
@@ -87,6 +86,8 @@ Update `resources/css/app.css`:
 /* Impor font atau file CSS lain yang valid tetap di sini */
 @import "tailwindcss";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* (Opsional) Memberitahu Tailwind di mana harus mencari kelas-kelas utility */
 @source "resources/views/**/*.blade.php";
@@ -179,7 +180,7 @@ Create login form (`resources/views/auth/login.blade.php`):
                     <div>
                         <label for="email" class="sr-only">Email address</label>
                         <input id="email" name="email" type="email" required 
-                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400" 
                                placeholder="Email address" value="{{ old('email') }}">
                         @error('email')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -189,7 +190,7 @@ Create login form (`resources/views/auth/login.blade.php`):
                     <div>
                         <label for="password" class="sr-only">Password</label>
                         <input id="password" name="password" type="password" required 
-                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400" 
                                placeholder="Password">
                         @error('password')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -215,8 +216,79 @@ Create login form (`resources/views/auth/login.blade.php`):
                 </div>
                 
                 <div class="text-center">
-                    <a href="{{ route('register') }}" class="text-primary-600 hover:text-primary-500">
+                    <a href="{{ route('register') }}" class="text-primary-600 hover:text-primary-500 dark:text-primary-400">
                         Don't have an account? Register here
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</x-layouts.app>
+```
+
+Create register form (`resources/views/auth/register.blade.php`):
+```php
+<x-layouts.app title="Register">
+    <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+                    Create your account
+                </h2>
+            </div>
+            
+            <form class="mt-8 space-y-6" method="POST" action="{{ route('register') }}">
+                @csrf
+                
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div>
+                        <label for="name" class="sr-only">Full name</label>
+                        <input id="name" name="name" type="text" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400" 
+                               placeholder="Full name" value="{{ old('name') }}">
+                        @error('name')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="sr-only">Email address</label>
+                        <input id="email" name="email" type="email" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400" 
+                               placeholder="Email address" value="{{ old('email') }}">
+                        @error('email')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
+                    <div>
+                        <label for="password" class="sr-only">Password</label>
+                        <input id="password" name="password" type="password" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400" 
+                               placeholder="Password">
+                        @error('password')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    
+                    <div>
+                        <label for="password_confirmation" class="sr-only">Confirm Password</label>
+                        <input id="password_confirmation" name="password_confirmation" type="password" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400" 
+                               placeholder="Confirm Password">
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit" 
+                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Create Account
+                    </button>
+                </div>
+                
+                <div class="text-center">
+                    <a href="{{ route('login') }}" class="text-primary-600 hover:text-primary-500 dark:text-primary-400">
+                        Already have an account? Sign in here
                     </a>
                 </div>
             </form>
@@ -256,7 +328,78 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 Route::redirect('/dashboard', '/admin/dashboard');
 ```
 
-Create Login Controller (`app/Http/Controllers/Auth/LoginController.php`):
+Create Register Controller (`app/Http/Controllers/Auth/RegisterController.php`):
+```php
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
+class RegisterController extends Controller
+{
+    public function showRegistrationForm()
+    {
+        return view('auth.register');
+    }
+
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => 'user', // Default role
+        ]);
+
+        Auth::login($user);
+
+        return redirect('/');
+    }
+}
+```
+
+## Step-by-Step Setup Commands
+
+Run these commands in order to set up the directory structure:
+
+```bash
+# Create the component directories
+mkdir -p resources/views/components/layouts
+mkdir -p resources/views/pages
+mkdir -p resources/views/auth
+
+# Create the base layout component
+touch resources/views/components/layouts/app.blade.php
+
+# Create other components
+touch resources/views/components/admin.blade.php
+touch resources/views/components/alert.blade.php
+touch resources/views/components/card.blade.php
+touch resources/views/components/navbar.blade.php
+touch resources/views/components/sidebar.blade.php
+
+# Create pages
+touch resources/views/pages/dashboard.blade.php
+
+# Create auth views (if using manual authentication)
+touch resources/views/auth/login.blade.php
+touch resources/views/auth/register.blade.php
+
+# Create auth controllers (if using manual authentication)
+php artisan make:controller Auth/LoginController
+php artisan make:controller Auth/RegisterController
+```
 ```php
 <?php
 
@@ -703,20 +846,24 @@ Create the following directory structure:
 ```
 resources/views/
 ├── components/
+│   ├── layouts/
+│   │   └── app.blade.php
 │   ├── admin.blade.php
 │   ├── alert.blade.php
 │   ├── card.blade.php
 │   ├── navbar.blade.php
 │   └── sidebar.blade.php
-├── layouts/
-│   └── app.blade.php
 └── pages/
     └── dashboard.blade.php
 ```
 
+**Important:** The `app.blade.php` layout should be inside `resources/views/components/layouts/` directory, NOT `resources/views/layouts/`.
+
 ## Blade Components
 
-### Base Layout (`resources/views/layouts/app.blade.php`)
+### Base Layout (`resources/views/components/layouts/app.blade.php`)
+
+**Create this file in the correct path: `resources/views/components/layouts/app.blade.php`**
 
 ```php
 <!DOCTYPE html>
@@ -1276,7 +1423,19 @@ npm run build --clean
 - Manually update Breeze generated views to use Tailwind v4 compatible classes
 - Or use manual authentication approach to avoid this issue
 
-**4. Tailwind styles not loading:**
+**4. Component path error (Unable to locate component [layouts.app]):**
+```bash
+# Ensure the file is in the correct location:
+# resources/views/components/layouts/app.blade.php (NOT layouts/app.blade.php)
+
+# Check if the component directory structure is correct:
+ls -la resources/views/components/layouts/
+
+# Clear view cache
+php artisan view:clear
+```
+
+**5. Tailwind styles not loading:**
 ```bash
 # Clear cache and rebuild
 npm run build
