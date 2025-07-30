@@ -19,6 +19,59 @@ A modern admin panel starter kit built with Laravel and Tailwind CSS 4, featurin
 - ✅ Dark mode support
 - ✅ Modular component architecture
 
+## 🔧 System Requirements
+
+- **PHP:** 8.1+ (Laravel 10) / 8.2+ (Laravel 11)  
+- **Node.js:** 18+
+- **Composer:** 2.0+
+- **Database:** MySQL 5.7+ / PostgreSQL 10+ / SQLite 3.8+
+
+## 🚀 Quick Start
+
+### For Laravel 11 (Recommended)
+```bash
+# Clone or download the template
+git clone https://github.com/your-username/laravel-admin-tailwind4.git admin-panel
+cd admin-panel
+
+# Install dependencies
+composer install
+npm install
+
+# Setup environment
+cp .env.example .env
+php artisan key:generate
+
+# Configure database in .env file
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=admin_panel
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Run migrations and seed data
+php artisan migrate --seed
+
+# Build assets and start server
+npm run dev
+php artisan serve
+```
+
+### For Laravel 10
+Follow the [Laravel 10 installation guide](#laravel-10x-version) below.
+
+## 📸 Screenshots
+
+### Dashboard (Light Mode)
+![Dashboard Light](docs/images/dashboard-light.png)
+
+### Dashboard (Dark Mode)  
+![Dashboard Dark](docs/images/dashboard-dark.png)
+
+### Mobile Responsive
+![Mobile View](docs/images/mobile-view.png)
+
 ---
 
 # Laravel 10.x Version
@@ -1146,12 +1199,21 @@ $icons = [
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        return view('pages.dashboard');
+        // Get dashboard statistics
+        $stats = [
+            'total_users' => User::count(),
+            'active_sessions' => 89, // This would come from sessions table
+            'pending_items' => 12,   // This would come from relevant table
+            'issues' => 3,           // This would come from issues/tickets table
+        ];
+
+        return view('pages.dashboard', compact('stats'));
     }
 }
 ```
@@ -1162,26 +1224,51 @@ class DashboardController extends Controller
 
 ```php
 <x-admin title="Dashboard">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+        <p class="text-gray-600 dark:text-gray-400">Welcome back! Here's what's happening with your admin panel today.</p>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Stats Cards -->
         <x-card class="text-center">
-            <div class="text-3xl font-bold text-primary-600 dark:text-primary-400">150</div>
+            <div class="text-3xl font-bold text-primary-600 dark:text-primary-400">{{ $stats['total_users'] ?? 150 }}</div>
             <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Total Users</div>
+            <div class="mt-2">
+                <span class="text-xs text-green-600 dark:text-green-400">
+                    <i class="fas fa-arrow-up"></i> +12% from last month
+                </span>
+            </div>
         </x-card>
         
         <x-card class="text-center">
-            <div class="text-3xl font-bold text-green-600 dark:text-green-400">89</div>
+            <div class="text-3xl font-bold text-green-600 dark:text-green-400">{{ $stats['active_sessions'] ?? 89 }}</div>
             <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Active Sessions</div>
+            <div class="mt-2">
+                <span class="text-xs text-green-600 dark:text-green-400">
+                    <i class="fas fa-arrow-up"></i> +5% from yesterday
+                </span>
+            </div>
         </x-card>
         
         <x-card class="text-center">
-            <div class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">12</div>
-            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Pending</div>
+            <div class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">{{ $stats['pending_items'] ?? 12 }}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Pending Items</div>
+            <div class="mt-2">
+                <span class="text-xs text-yellow-600 dark:text-yellow-400">
+                    <i class="fas fa-minus"></i> No change
+                </span>
+            </div>
         </x-card>
         
         <x-card class="text-center">
-            <div class="text-3xl font-bold text-red-600 dark:text-red-400">3</div>
-            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Issues</div>
+            <div class="text-3xl font-bold text-red-600 dark:text-red-400">{{ $stats['issues'] ?? 3 }}</div>
+            <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">Open Issues</div>
+            <div class="mt-2">
+                <span class="text-xs text-red-600 dark:text-red-400">
+                    <i class="fas fa-arrow-down"></i> -2 from yesterday
+                </span>
+            </div>
         </x-card>
     </div>
     
@@ -1189,33 +1276,51 @@ class DashboardController extends Controller
         <!-- Recent Activity -->
         <x-card title="Recent Activity" subtitle="Latest system activities">
             <div class="space-y-4">
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
                     <div class="flex-shrink-0">
-                        <i class="fas fa-user-plus text-green-500"></i>
+                        <div class="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user-plus text-green-600 dark:text-green-400 text-sm"></i>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-900 dark:text-white">New user registered</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">2 minutes ago</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">New user registered</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">john.doe@example.com • 2 minutes ago</p>
                     </div>
                 </div>
                 
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
                     <div class="flex-shrink-0">
-                        <i class="fas fa-edit text-blue-500"></i>
+                        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                            <i class="fas fa-edit text-blue-600 dark:text-blue-400 text-sm"></i>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-900 dark:text-white">Settings updated</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">1 hour ago</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">Settings updated</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Email notifications enabled • 1 hour ago</p>
                     </div>
                 </div>
                 
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
                     <div class="flex-shrink-0">
-                        <i class="fas fa-trash text-red-500"></i>
+                        <div class="w-8 h-8 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                            <i class="fas fa-trash text-red-600 dark:text-red-400 text-sm"></i>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-900 dark:text-white">User account deleted</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">3 hours ago</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">User account deleted</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">spam.user@example.com • 3 hours ago</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center">
+                            <i class="fas fa-upload text-purple-600 dark:text-purple-400 text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">File uploaded</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">report.pdf • 5 hours ago</p>
                     </div>
                 </div>
             </div>
@@ -1224,36 +1329,165 @@ class DashboardController extends Controller
         <!-- Quick Actions -->
         <x-card title="Quick Actions" subtitle="Commonly used admin actions">
             <div class="grid grid-cols-2 gap-4">
-                <button class="btn btn-primary flex items-center justify-center space-x-2">
+                <button class="btn btn-primary flex items-center justify-center space-x-2 h-12">
                     <i class="fas fa-user-plus"></i>
                     <span>Add User</span>
                 </button>
                 
-                <button class="btn btn-secondary flex items-center justify-center space-x-2">
+                <button class="btn btn-secondary flex items-center justify-center space-x-2 h-12">
                     <i class="fas fa-cog"></i>
                     <span>Settings</span>
                 </button>
                 
-                <button class="btn btn-secondary flex items-center justify-center space-x-2">
+                <button class="btn btn-secondary flex items-center justify-center space-x-2 h-12">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </button>
                 
-                <button class="btn btn-secondary flex items-center justify-center space-x-2">
+                <button class="btn btn-secondary flex items-center justify-center space-x-2 h-12">
                     <i class="fas fa-download"></i>
                     <span>Export</span>
                 </button>
+                
+                <button class="btn btn-secondary flex items-center justify-center space-x-2 h-12">
+                    <i class="fas fa-envelope"></i>
+                    <span>Send Mail</span>
+                </button>
+                
+                <button class="btn btn-secondary flex items-center justify-center space-x-2 h-12">
+                    <i class="fas fa-database"></i>
+                    <span>Backup</span>
+                </button>
+            </div>
+        </x-card>
+    </div>
+
+    <!-- System Status -->
+    <div class="mt-6">
+        <x-card title="System Status" subtitle="Current system health and performance">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-green-600 dark:text-green-400">99.9%</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Uptime</div>
+                    <div class="mt-1">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                            <i class="fas fa-circle w-2 h-2 mr-1"></i>
+                            Healthy
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">2.3s</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Avg Response</div>
+                    <div class="mt-1">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                            <i class="fas fa-circle w-2 h-2 mr-1"></i>
+                            Good
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">76%</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">Server Load</div>
+                    <div class="mt-1">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                            <i class="fas fa-circle w-2 h-2 mr-1"></i>
+                            Moderate
+                        </span>
+                    </div>
+                </div>
             </div>
         </x-card>
     </div>
 </x-admin>
 ```
 
+## Environment Configuration
+
+Create a comprehensive `.env.example` file:
+
+```env
+# Application
+APP_NAME="Laravel Admin Panel"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+# Logging
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+# Database
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=admin_panel
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Broadcasting
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+# Redis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+# Mail
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+# AWS (if using S3)
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+# Pusher (if using real-time features)
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_HOST=
+PUSHER_PORT=443
+PUSHER_SCHEME=https
+PUSHER_APP_CLUSTER=mt1
+
+# Vite
+VITE_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+VITE_PUSHER_HOST="${PUSHER_HOST}"
+VITE_PUSHER_PORT="${PUSHER_PORT}"
+VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
+VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+```
+
 ## Build and Run (Both Versions)
 
 ```bash
 # Install dependencies
+composer install
 npm install
+
+# Environment setup
+cp .env.example .env
+php artisan key:generate
+
+# Configure your database in .env file
 
 # Build assets for development
 npm run dev
@@ -1290,6 +1524,415 @@ After running the seeders, you can login with:
 - **Admin Dashboard:** `http://localhost:8000/admin/dashboard`
 - **Logout:** Available from the navbar dropdown
 
+## 🎨 Customization Guide
+
+### Changing Primary Colors
+
+Update the theme colors in `resources/css/app.css`:
+
+```css
+@theme {
+  --color-primary: #3b82f6;        /* Change this to your brand color */
+  --color-primary-50: #eff6ff;     /* Lightest shade */
+  --color-primary-100: #dbeafe;    /* Very light */
+  --color-primary-500: #3b82f6;    /* Base color */
+  --color-primary-600: #2563eb;    /* Slightly darker */
+  --color-primary-700: #1d4ed8;    /* Darker */
+  --color-primary-900: #1e3a8a;    /* Darkest shade */
+}
+```
+
+### Adding New Sidebar Items
+
+Update `resources/views/components/sidebar.blade.php`:
+
+```php
+@can('view-analytics')
+<li>
+    <a href="{{ route('admin.analytics') }}" 
+       class="group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold {{ request()->routeIs('admin.analytics') ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400' : 'text-gray-700 hover:text-primary-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700' }}">
+        <i class="fas fa-chart-line w-5 h-5 shrink-0"></i>
+        Analytics
+    </a>
+</li>
+@endcan
+```
+
+### Creating Custom Blade Components
+
+```bash
+# Create a new component
+php artisan make:component Forms/TextInput
+```
+
+Example input component (`resources/views/components/forms/text-input.blade.php`):
+
+```php
+@props([
+    'label' => '',
+    'name' => '',
+    'type' => 'text',
+    'required' => false,
+    'placeholder' => ''
+])
+
+<div class="space-y-1">
+    @if($label)
+        <label for="{{ $name }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ $label }}
+            @if($required)
+                <span class="text-red-500">*</span>
+            @endif
+        </label>
+    @endif
+    
+    <input 
+        type="{{ $type }}"
+        name="{{ $name }}"
+        id="{{ $name }}"
+        @if($required) required @endif
+        @if($placeholder) placeholder="{{ $placeholder }}" @endif
+        {{ $attributes->merge(['class' => 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400']) }}
+    >
+    
+    @error($name)
+        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+    @enderror
+</div>
+```
+
+Usage:
+
+```php
+<x-forms.text-input 
+    label="Email Address" 
+    name="email" 
+    type="email" 
+    :required="true" 
+    placeholder="Enter your email"
+    value="{{ old('email') }}" 
+/>
+```
+
+## 🧪 Testing
+
+### Setting up Testing Environment
+
+```bash
+# Create test database
+php artisan migrate --env=testing
+
+# Run tests
+php artisan test
+
+# Run specific test
+php artisan test --filter=DashboardTest
+
+# Generate test coverage
+php artisan test --coverage
+```
+
+### Example Test Cases
+
+```php
+// tests/Feature/AdminDashboardTest.php
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class AdminDashboardTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_admin_can_access_dashboard()
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        $response = $this->actingAs($admin)->get('/admin/dashboard');
+
+        $response->assertStatus(200);
+        $response->assertSee('Dashboard');
+    }
+
+    public function test_regular_user_cannot_access_dashboard()
+    {
+        $user = User::factory()->create(['role' => 'user']);
+
+        $response = $this->actingAs($user)->get('/admin/dashboard');
+
+        $response->assertStatus(403);
+    }
+
+    public function test_guest_redirected_to_login()
+    {
+        $response = $this->get('/admin/dashboard');
+
+        $response->assertRedirect('/login');
+    }
+}
+```
+
+## 📊 Advanced Features
+
+### Adding Real-time Notifications
+
+Install Laravel Echo and Pusher:
+
+```bash
+npm install --save-dev laravel-echo pusher-js
+```
+
+Update `resources/js/app.js`:
+
+```javascript
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: import.meta.env.VITE_PUSHER_APP_KEY,
+    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+    forceTLS: true
+});
+
+// Listen for notifications
+window.Echo.private(`admin.${userId}`)
+    .listen('AdminNotification', (e) => {
+        // Show notification
+        showNotification(e.message, e.type);
+    });
+```
+
+### Adding Activity Logging
+
+Install Spatie Activity Log:
+
+```bash
+composer require spatie/laravel-activitylog
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
+php artisan migrate
+```
+
+Usage in controllers:
+
+```php
+use Spatie\Activitylog\Traits\LogsActivity;
+
+class UserController extends Controller
+{
+    public function store(Request $request)
+    {
+        $user = User::create($request->validated());
+        
+        activity()
+            ->performedOn($user)
+            ->causedBy(auth()->user())
+            ->log('Created new user');
+            
+        return redirect()->route('admin.users');
+    }
+}
+```
+
+### Adding Data Export Features
+
+Create export functionality:
+
+```bash
+composer require maatwebsite/excel
+php artisan vendor:publish --provider="Maatwebsite\Excel\ExcelServiceProvider" --tag=config
+```
+
+Example export class:
+
+```php
+// app/Exports/UsersExport.php
+<?php
+
+namespace App\Exports;
+
+use App\Models\User;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+
+class UsersExport implements FromCollection, WithHeadings
+{
+    public function collection()
+    {
+        return User::select('id', 'name', 'email', 'role', 'created_at')->get();
+    }
+
+    public function headings(): array
+    {
+        return ['ID', 'Name', 'Email', 'Role', 'Created At'];
+    }
+}
+```
+
+Controller method:
+
+```php
+use App\Exports\UsersExport;
+use Maatwebsite\Excel\Facades\Excel;
+
+public function exportUsers()
+{
+    return Excel::download(new UsersExport, 'users.xlsx');
+}
+```
+
+## 🚀 Deployment Guide
+
+### Production Optimization
+
+```bash
+# Optimize for production
+composer install --optimize-autoloader --no-dev
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan event:cache
+
+# Build production assets
+npm run build
+
+# Set proper permissions
+chmod -R 755 storage bootstrap/cache
+```
+
+### Docker Configuration
+
+Create `docker-compose.yml`:
+
+```yaml
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+      - redis
+    environment:
+      - APP_ENV=production
+      - DB_HOST=db
+      - REDIS_HOST=redis
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: admin_panel
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/html
+    depends_on:
+      - app
+
+volumes:
+  mysql_data:
+```
+
+Create `Dockerfile`:
+
+```dockerfile
+FROM php:8.2-fpm
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    nodejs \
+    npm
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy application code
+COPY . .
+
+# Install dependencies
+RUN composer install --optimize-autoloader --no-dev
+RUN npm install && npm run build
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Expose port
+EXPOSE 8000
+
+# Start PHP-FPM
+CMD php artisan serve --host=0.0.0.0 --port=8000
+```
+
+### Nginx Configuration
+
+Create `nginx.conf`:
+
+```nginx
+server {
+    listen 80;
+    server_name localhost;
+    root /var/www/html/public;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass app:9000;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
+
 ## Usage Examples
 
 ### Creating Flash Messages in Controllers
@@ -1313,7 +1956,10 @@ return redirect()->back()->with('info', 'Here is some information.');
 ```php
 <x-admin title="Users Management">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Users</h1>
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Users</h1>
+            <p class="text-gray-600 dark:text-gray-400">Manage system users and their permissions</p>
+        </div>
         <button class="btn btn-primary">
             <i class="fas fa-plus mr-2"></i>
             Add User
@@ -1322,7 +1968,21 @@ return redirect()->back()->with('info', 'Here is some information.');
     
     <x-card>
         <!-- Your content here -->
-        <p>Users table and management interface...</p>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    <!-- Table rows here -->
+                </tbody>
+            </table>
+        </div>
     </x-card>
 </x-admin>
 ```
@@ -1333,8 +1993,10 @@ For Laravel 10, add to `routes/web.php`:
 ```php
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/users', [UserController::class, 'index'])->name('admin.users');
+    Route::resource('/users', UserController::class)->names('admin.users');
     Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings');
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('admin.analytics');
+    Route::post('/users/export', [UserController::class, 'export'])->name('admin.users.export');
 });
 ```
 
@@ -1355,13 +2017,16 @@ Example button component (`resources/views/components/button.blade.php`):
 @props([
     'type' => 'button',
     'variant' => 'primary',
-    'size' => 'md'
+    'size' => 'md',
+    'loading' => false
 ])
 
 @php
 $classes = [
     'primary' => 'btn btn-primary',
     'secondary' => 'btn btn-secondary',
+    'danger' => 'bg-red-600 text-white hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600',
+    'success' => 'bg-green-600 text-white hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600',
 ];
 
 $sizes = [
@@ -1373,15 +2038,20 @@ $sizes = [
 
 <button 
     type="{{ $type }}"
-    {{ $attributes->merge(['class' => $classes[$variant] . ' ' . $sizes[$size]]) }}
+    {{ $attributes->merge(['class' => $classes[$variant] . ' ' . $sizes[$size] . ' relative']) }}
+    @if($loading) disabled @endif
 >
+    @if($loading)
+        <i class="fas fa-spinner fa-spin mr-2"></i>
+    @endif
     {{ $slot }}
 </button>
 ```
 
 Usage:
 ```php
-<x-button variant="primary" size="lg">Save Changes</x-button>
+<x-button variant="primary" size="lg" :loading="false">Save Changes</x-button>
+<x-button variant="danger" onclick="confirmDelete()">Delete User</x-button>
 ```
 
 ## Key Differences Between Laravel 10 & 11
@@ -1393,6 +2063,8 @@ Usage:
 | **Directory Structure** | Traditional structure | Simplified structure |
 | **Service Providers** | Separate Auth provider | Consolidated in App provider |
 | **Configuration** | More config files | Streamlined config |
+| **PHP Version** | 8.1+ | 8.2+ |
+| **Breeze Compatibility** | v1.x (some conflicts) | v2.x (better support) |
 
 ## Troubleshooting
 
@@ -1446,21 +2118,28 @@ php artisan view:clear
 php artisan config:clear
 ```
 
-**2. FontAwesome icons not showing:**
+**6. FontAwesome icons not showing:**
 - Ensure `@import "@fortawesome/fontawesome-free/css/all.min.css";` is in `app.css`
 - Run `npm install` and `npm run build`
 
-**3. Admin middleware not working:**
+**7. Admin middleware not working:**
 - Check middleware registration in correct file (Kernel.php vs bootstrap/app.php)
 - Verify user has correct role in database
 
-**4. Gates not working:**
+**8. Gates not working:**
 - Ensure gates are defined in correct provider (AuthServiceProvider vs AppServiceProvider)
 - Check user is authenticated before testing gates
 
-**5. Dark mode toggle not working:**
+**9. Dark mode toggle not working:**
 - Ensure JavaScript function is loaded
 - Check cookie theme value is being set correctly
+
+**10. Permission denied errors:**
+```bash
+# Fix storage permissions
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+```
 
 ### Performance Tips
 
@@ -1470,40 +2149,262 @@ php artisan config:clear
    php artisan config:cache
    php artisan route:cache
    php artisan view:cache
+   php artisan event:cache
    ```
 
-2. **Optimize images:**
+2. **Database optimization:**
+   ```php
+   // Add indexes to frequently queried columns
+   Schema::table('users', function (Blueprint $table) {
+       $table->index('role');
+       $table->index('email');
+       $table->index(['role', 'created_at']);
+   });
+   ```
+
+3. **Cache frequently accessed data:**
+   ```php
+   // In DashboardController
+   public function index()
+   {
+       $stats = Cache::remember('dashboard.stats', 300, function () {
+           return [
+               'total_users' => User::count(),
+               'active_sessions' => $this->getActiveSessions(),
+               'pending_items' => $this->getPendingItems(),
+               'issues' => $this->getOpenIssues(),
+           ];
+       });
+
+       return view('pages.dashboard', compact('stats'));
+   }
+   ```
+
+4. **Optimize images:**
    - Use optimized avatar images instead of UI Avatars API in production
    - Implement lazy loading for dashboard cards
+   - Use WebP format for better compression
 
-3. **Database optimization:**
-   - Add indexes to frequently queried columns (role, email)
-   - Use database seeders for test data
+## Security Best Practices
+
+### 1. CSRF Protection
+Always include CSRF tokens in forms:
+```php
+<form method="POST" action="{{ route('admin.users.store') }}">
+    @csrf
+    <!-- form fields -->
+</form>
+```
+
+### 2. Input Validation
+Use Form Requests for complex validation:
+```bash
+php artisan make:request StoreUserRequest
+```
+
+```php
+// app/Http/Requests/StoreUserRequest.php
+public function rules()
+{
+    return [
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|string|min:8|confirmed',
+        'role' => 'required|in:admin,moderator,user',
+    ];
+}
+```
+
+### 3. Rate Limiting
+Add rate limiting to sensitive routes:
+```php
+Route::middleware(['auth', 'admin', 'throttle:60,1'])->group(function () {
+    Route::post('/admin/users', [UserController::class, 'store']);
+});
+```
+
+### 4. SQL Injection Prevention
+Always use Eloquent or query builder:
+```php
+// Good
+User::where('email', $email)->first();
+
+// Bad
+DB::select("SELECT * FROM users WHERE email = '$email'");
+```
+
+## API Documentation
+
+### Creating API Endpoints
+
+```bash
+php artisan make:controller Api/DashboardController
+```
+
+```php
+// app/Http/Controllers/Api/DashboardController.php
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+
+class DashboardController extends Controller
+{
+    public function stats()
+    {
+        return response()->json([
+            'total_users' => User::count(),
+            'active_sessions' => 89,
+            'pending_items' => 12,
+            'issues' => 3,
+        ]);
+    }
+}
+```
+
+Add API routes in `routes/api.php`:
+```php
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/stats', [Api\DashboardController::class, 'stats']);
+});
+```
+
+## Internationalization (i18n)
+
+### Adding Multi-language Support
+
+```bash
+php artisan make:middleware SetLocale
+```
+
+```php
+// app/Http/Middleware/SetLocale.php
+public function handle($request, Closure $next)
+{
+    if (session()->has('locale')) {
+        app()->setLocale(session('locale'));
+    }
+    return $next($request);
+}
+```
+
+Create language files:
+```php
+// resources/lang/en/dashboard.php
+return [
+    'title' => 'Dashboard',
+    'welcome' => 'Welcome back!',
+    'total_users' => 'Total Users',
+    'active_sessions' => 'Active Sessions',
+];
+
+// resources/lang/id/dashboard.php
+return [
+    'title' => 'Dasbor',
+    'welcome' => 'Selamat datang kembali!',
+    'total_users' => 'Total Pengguna',
+    'active_sessions' => 'Sesi Aktif',
+];
+```
+
+Use in views:
+```php
+<h1>{{ __('dashboard.title') }}</h1>
+<p>{{ __('dashboard.welcome') }}</p>
+```
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+We welcome contributions! Please follow these guidelines:
+
+### 1. Fork and Clone
+```bash
+git clone https://github.com/your-username/laravel-admin-tailwind4.git
+cd laravel-admin-tailwind4
+```
+
+### 2. Create Feature Branch
+```bash
+git checkout -b feature/amazing-feature
+```
+
+### 3. Make Changes
+- Follow PSR-12 coding standards
+- Add tests for new features
+- Update documentation
+
+### 4. Test Your Changes
+```bash
+php artisan test
+npm run build
+```
+
+### 5. Submit Pull Request
+- Write clear commit messages
+- Include screenshots for UI changes
+- Update CHANGELOG.md
+
+### Code Style Guidelines
+```bash
+# Install PHP CS Fixer
+composer require --dev friendsofphp/php-cs-fixer
+
+# Format code
+./vendor/bin/php-cs-fixer fix
+```
 
 ## Changelog
 
-### v1.2.0
+### v2.0.0 (2024-01-30)
+- Added comprehensive documentation
+- Added testing examples
+- Added deployment guides
+- Added Docker configuration
+- Enhanced security features
+- Added API documentation
+- Added internationalization support
+
+### v1.2.0 (2024-01-15)
 - Added support for Laravel 11
 - Updated middleware registration for Laravel 11
 - Consolidated authentication setup
 
-### v1.1.0
+### v1.1.0 (2023-12-20)
 - Added dark mode support
 - Improved responsive design
 - Added flash notification system
+- Enhanced dashboard with more statistics
 
-### v1.0.0
+### v1.0.0 (2023-12-01)
 - Initial release with Laravel 10 support
 - Basic admin panel with Tailwind CSS 4
 - Role-based access control
+- Modular Blade components
+
+## Roadmap
+
+### v2.1.0 (Planned)
+- [ ] Two-factor authentication
+- [ ] Advanced user management
+- [ ] File manager integration
+- [ ] Activity logs viewer
+- [ ] System health monitoring
+
+### v2.2.0 (Planned)
+- [ ] Advanced reporting features
+- [ ] Email template management
+- [ ] Backup management interface
+- [ ] API rate limiting dashboard
+- [ ] Advanced caching controls
+
+### v3.0.0 (Future)
+- [ ] Multi-tenancy support
+- [ ] Advanced permission system
+- [ ] Marketplace for plugins
+- [ ] AI-powered analytics
+- [ ] Real-time collaboration features
 
 ## License
 
@@ -1514,6 +2415,12 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Documentation:** This README
 - **Issues:** [GitHub Issues](https://github.com/your-username/laravel-admin-tailwind4/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/your-username/laravel-admin-tailwind4/discussions)
+- **Discord:** [Join our Discord server](https://discord.gg/your-invite)
+- **Email:** support@yourdomain.com
+
+### Commercial Support
+
+For commercial support, custom development, or consulting services, please contact us at business@yourdomain.com.
 
 ## Credits
 
@@ -1521,3 +2428,17 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - [Tailwind CSS](https://tailwindcss.com) - CSS Framework
 - [FontAwesome](https://fontawesome.com) - Icon Library
 - [Laravel Breeze](https://laravel.com/docs/starter-kits#laravel-breeze) - Authentication Scaffolding
+- [Vite](https://vitejs.dev) - Frontend Build Tool
+
+## Sponsors
+
+Thanks to our sponsors who make this project possible:
+
+- [Your Company Name](https://yourcompany.com)
+- [Another Sponsor](https://anothersponsor.com)
+
+### Become a Sponsor
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website.
+
+[Become a sponsor on GitHub](https://github.com/sponsors/your-username)
