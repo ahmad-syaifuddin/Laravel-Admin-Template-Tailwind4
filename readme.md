@@ -134,6 +134,9 @@ Update `resources/css/app.css`:
 }
 ```
 
+Jikalau kamu ingin tetap menggunakan Breeze 1.19 yg notabene nya masih menggunakan tailwind 3.* maka sebaiknya buka panduan ini untuk melihat panduan ngubah style tailwind v3.* ke tailwind v.4* 
+> 📖 **[Lihat Panduan Lengkap Install Breeze 1.19 di laravel 10 dengan upgrade ke style tailwind v4](https://github.com/ahmad-syaifuddin/panduan-install-laravel-breeze-di-laravel10?tab=readme-ov-file#step-5-update-breeze-views-for-tailwind-v4)**
+
 ## Alternative Approach: Manual Authentication (Laravel 10)
 
 If you prefer to avoid Breeze compatibility issues with Laravel 10, you can set up authentication manually:
