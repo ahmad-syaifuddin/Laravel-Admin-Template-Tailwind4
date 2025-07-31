@@ -1228,6 +1228,21 @@ class DashboardController extends Controller
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
         <p class="text-gray-600 dark:text-gray-400">Welcome back! Here's what's happening with your admin panel today.</p>
     </div>
+    <!-- Welcome Card -->
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-primary-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold">Welcome back, {{ Auth::user()->name }}! 👋</h3>
+                            <p class="text-gray-600 dark:text-gray-400">You're logged in and ready to go.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Stats Cards -->
